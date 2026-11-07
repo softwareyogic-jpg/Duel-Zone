@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DUEL ZONE</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- LOBBY OVERLAY -->
+    <div id="lobby">
+        <!-- Main Menu Screen -->
+        <div id="menu-screen">
+            <div class="logo-container">
+                <h1 class="game-logo">DUEL<span class="logo-accent">ZONE</span></h1>
+                <p class="tagline">REAL-TIME MULTIPLAYER COMBAT</p>
+            </div>
+            <div class="menu-buttons">
+                <button id="local2p-btn" class="btn btn-primary btn-glow-blue">👥 2 PLAYERS (SAME PC / KEYBOARD)</button>
+                <button id="bot-btn" class="btn btn-accent btn-glow">🤖 PLAY VS BOT (SINGLE PLAYER)</button>
+                <div class="menu-online-row">
+                    <button id="create-btn" class="btn btn-secondary">ONLINE CREATE</button>
+                    <button id="join-btn" class="btn btn-secondary">ONLINE JOIN</button>
+                </div>
+                <div class="menu-sub-row">
+                    <button id="char-btn" class="btn btn-small">CHARACTERS</button>
+                    <button id="settings-btn" class="btn btn-small">SETTINGS</button>
+                </div>
+                <div class="menu-coffee-row">
+                    <button id="coffee-btn" class="btn btn-coffee btn-glow-gold" title="Support Developer DIP DAS">☕ BUY ME A COFFEE (SUPPORT DEV)</button>
+                </div>
+            </div>
+            <div id="join-input-container" style="display:none">
+                <input type="text" id="room-code-input" maxlength="6" placeholder="ENTER ROOM CODE" autocomplete="off" spellcheck="false">
+                <button id="join-submit-btn" class="btn btn-accent">JOIN</button>
+                <button id="join-cancel-btn" class="btn btn-small">CANCEL</button>
+            </div>
+            <div id="error-message" class="error-msg" style="display:none"></div>
+        </div>
+
+        <!-- Character Selection Modal -->
+        <div id="char-modal" class="modal-backdrop" style="display:none">
+            <div class="modal-card char-modal-card">
+                <h2 class="modal-title" id="roster-modal-title">CHOOSE YOUR FIGHTERS</h2>
+
+                <!-- Matchup Preview Bar -->
+                <div class="matchup-preview-bar">
+                    <div class="preview-p1">
+                        <span class="preview-label">PLAYER 1 (LEFT)</span>
+                        <div class="preview-fighter-row">
+                            <img id="preview-p1-img" src="/assets/player_face.jpg" class="preview-mini-avatar" alt="P1">
+                            <strong id="preview-p1-name" class="p1-text">DIP</strong>
+                        </div>
+                    </div>
+                    <div class="preview-vs">VS</div>
+                    <div class="preview-p2">
+                        <span class="preview-label">PLAYER 2 / BOT (RIGHT)</span>
+                        <div class="preview-fighter-row">
+                            <strong id="preview-p2-name" class="p2-text">SANKET</strong>
+                            <img id="preview-p2-img" src="/assets/sanket_face.jpg" class="preview-mini-avatar" alt="P2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arena Map Selector (Daytime Brawl Stars style vs Night Cyber City) -->
+                <div class="map-selection-bar">
+                    <span class="map-selection-title">SELECT BATTLEGROUND ARENA:</span>
+                    <div class="map-options">
+                        <button type="button" class="map-btn active-map" id="map-btn-brawl" data-map="brawl">
+                            <span class="map-icon">☀️</span>
+                            <span class="map-name">BRAWL BATTLEGROUND</span>
+                            <span class="map-sub">Daytime Sunny Arena</span>
+                        </button>
+                        <button type="button" class="map-btn" id="map-btn-cyber" data-map="cyber">
+                            <span class="map-icon">🌆</span>
+                            <span class="map-name">CYBER CITY</span>
+                            <span class="map-sub">Night Neon Skyline</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bot Difficulty Selector (Only visible for VS BOT single player) -->
+                <div id="bot-difficulty-bar" class="bot-difficulty-bar" style="display:none">
+                    <span class="bot-difficulty-title">🤖 BOT DIFFICULTY MODE:</span>
+                    <div class="difficulty-options">
+                        <button type="button" class="diff-btn" data-diff="easy" id="diff-btn-easy">
+                            <span class="diff-icon">🟢</span>
+                            <span class="diff-name">EASY</span>
+                            <span class="diff-desc">Casual & Slow</span>
+                        </button>
+                        <button type="button" class="diff-btn active-diff" data-diff="normal" id="diff-btn-normal">
+                            <span class="diff-icon">🟡</span>
+                            <span class="diff-name">NORMAL</span>
+                            <span class="diff-desc">Balanced</span>
+                        </button>
+                        <button type="button" class="diff-btn" data-diff="hard" id="diff-btn-hard">
+                            <span class="diff-icon">🔴</span>
+                            <span class="diff-name">HARD</span>
+                            <span class="diff-desc">Aggressive</span>
+                        </button>
+                        <button type="button" class="diff-btn" data-diff="supreme" id="diff-btn-supreme">
+                            <span class="diff-icon">⚡</span>
+                            <span class="diff-name">SUPREME</span>
+                            <span class="diff-desc">God-Tier Speed</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="characters-grid">
+                    <!-- DIP -->
+                    <div class="char-card active-blue" id="card-dip">
+                        <div class="char-badge blue-badge" id="badge-dip">PLAYER 1</div>
+                        <div class="char-avatar-container">
+                            <img src="/assets/player_face.jpg" class="char-photo-avatar" alt="DIP Hero Face">
+                        </div>
+                        <h3>DIP</h3>
+                        <p class="char-role">Master Marksman</p>
+                        <div class="char-stats">
+                            <span>Gun: Plasma Carbine (20 HP)</span>
+                            <span class="char-special-stat" style="color:#ffd700">🪔 Diwali Arena Fighter</span>
+                        </div>
+                        <div class="char-actions">
+                            <button class="btn btn-sm btn-pick-p1" data-char="dip">SELECT P1</button>
+                            <button class="btn btn-sm btn-pick-p2" data-char="dip">SELECT P2 / BOT</button>
+                        </div>
+                    </div>
+
+                    <!-- SANKET -->
+                    <div class="char-card active-red" id="card-sanket">
+                        <div class="char-badge red-badge" id="badge-sanket">PLAYER 2 / BOT</div>
+                        <div class="char-avatar-container">
+                            <img src="/assets/sanket_face.jpg" class="char-photo-avatar char-photo-red" alt="Sanket Hero Face">
+                        </div>
+                        <h3>SANKET</h3>
+                        <p class="char-role">Heavy Vanguard</p>
+                        <div class="char-stats">
+                            <span>Gun: Mag-Rifle (20 HP)</span>
+                            <span class="char-special-stat" style="color:#ffd700">🪔 Diwali Arena Fighter</span>
+                        </div>
+                        <div class="char-actions">
+                            <button class="btn btn-sm btn-pick-p1" data-char="sanket">SELECT P1</button>
+                            <button class="btn btn-sm btn-pick-p2" data-char="sanket">SELECT P2 / BOT</button>
+                        </div>
+                    </div>
+
+                    <!-- SUSHRUTO -->
+                    <div class="char-card" id="card-sushruto">
+                        <div class="char-badge gray-badge" id="badge-sushruto">AVAILABLE</div>
+                        <div class="char-avatar-container">
+                            <img src="/assets/sushruto_face.png" class="char-photo-avatar char-photo-green" alt="Sushruto Hero Face">
+                        </div>
+                        <h3>SUSHRUTO</h3>
+                        <p class="char-role">Cyber Tactician</p>
+                        <div class="char-stats">
+                            <span>Gun: Arc Cannon (20 HP)</span>
+                            <span class="char-special-stat" style="color:#ffd700">🪔 Diwali Arena Fighter</span>
+                        </div>
+                        <div class="char-actions">
+                            <button class="btn btn-sm btn-pick-p1" data-char="sushruto">SELECT P1</button>
+                            <button class="btn btn-sm btn-pick-p2" data-char="sushruto">SELECT P2 / BOT</button>
+                        </div>
+                    </div>
+
+                    <!-- AHIL (Drunk Smoker Hero) -->
+                    <div class="char-card" id="card-ahil">
+                        <div class="char-badge gray-badge" id="badge-ahil">AVAILABLE</div>
+                        <div class="char-avatar-container" style="position:relative;">
+                            <img src="/assets/ahil_face.jpg" class="char-photo-avatar char-photo-purple" alt="Ahil Hero Face">
+                            <span class="smoke-icon-badge" title="Always Smoking & Drunk Swagger">🚬💨</span>
+                        </div>
+                        <h3>AHIL</h3>
+                        <p class="char-role" style="color: #c084fc;">Drunken Smoker 🚬</p>
+                        <div class="char-stats">
+                            <span>Gun: Smoke Blaster (20 HP)</span>
+                            <span class="char-special-stat" style="color:#c084fc">💨 Drunken Smoke Storm</span>
+                        </div>
+                        <div class="char-actions">
+                            <button class="btn btn-sm btn-pick-p1" data-char="ahil">SELECT P1</button>
+                            <button class="btn btn-sm btn-pick-p2" data-char="ahil">SELECT P2 / BOT</button>
+                        </div>
+                    </div>
+
+                    <!-- KESHAV (Drunk Bottle Thrower) -->
+                    <div class="char-card" id="card-keshav">
+                        <div class="char-badge gray-badge" id="badge-keshav">AVAILABLE</div>
+                        <div class="char-avatar-container" style="position:relative;">
+                            <img src="/assets/keshav_face.jpg" class="char-photo-avatar char-photo-orange" alt="Keshav Hero Face">
+                            <span class="bottle-icon-badge" title="Drunk Alcohol Bottle Thrower">🍾🍻</span>
+                        </div>
+                        <h3>KESHAV</h3>
+                        <p class="char-role" style="color: #f59e0b;">Drunk Bottle Thrower 🍾</p>
+                        <div class="char-stats">
+                            <span>Attack: Alcohol Bottle Toss (20 HP)</span>
+                            <span class="char-special-stat" style="color:#f59e0b">🔥 Desi Daru Molotov</span>
+                        </div>
+                        <div class="char-actions">
+                            <button class="btn btn-sm btn-pick-p1" data-char="keshav">SELECT P1</button>
+                            <button class="btn btn-sm btn-pick-p2" data-char="keshav">SELECT P2 / BOT</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-bottom-actions">
+                    <button id="start-battle-btn" class="btn btn-accent btn-glow" style="width: 100%; font-size: 1.15rem; padding: 14px 28px; margin-top: 14px; letter-spacing: 2px;">⚔️ START MATCH (FIGHT!) ⚔️</button>
+                    <button id="close-char-btn" class="btn btn-small" style="margin-top: 8px;">BACK TO MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal-backdrop" style="display:none">
+            <div class="modal-card settings-card">
+                <h2 class="modal-title">GAME SETTINGS</h2>
+                <div class="setting-row">
+                    <span>Sound Effects</span>
+                    <button id="sound-toggle-btn" class="btn btn-small btn-toggle">SFX: ON</button>
+                </div>
+                <div class="setting-row">
+                    <span>Display Mode</span>
+                    <button id="fullscreen-btn" class="btn btn-small">FULLSCREEN</button>
+                </div>
+                <div class="controls-cheat-sheet">
+                    <h3>DIWALI BATTLEGROUND RULES & CONTROLS</h3>
+                    <div style="background: rgba(255, 170, 0, 0.15); border: 1px solid #ffaa00; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.88rem; color: #ffd700; line-height: 1.5;">
+                        🪔 <strong>Health:</strong> 100 HP Max | <strong>Normal Bullets:</strong> -20 HP per hit<br>
+                        💥 <strong>Diwali Pataka (Bomb):</strong> Spawns on map! Targets opponent's last position for <strong>-50 HP</strong> blast (Opponent can dodge out of red circle!)<br>
+                        🍬 <strong>Diwali Soan Papdi:</strong> Spawns on map! Eat for <strong>+40 HP Heal</strong> & extra life!
+                    </div>
+                    <div class="controls-columns">
+                        <div class="ctrl-col">
+                            <h4>Player 1 (Blue)</h4>
+                            <p><strong>W / A / S / D</strong> — 8-Way Move</p>
+                            <p><strong>Auto-Aim</strong> — Smart Lock-on</p>
+                            <p><strong>F / Left Click / Enter</strong> — Shoot 🔫</p>
+                            <p><strong>Walk over items</strong> — Collect Pataka / Sweets</p>
+                        </div>
+                        <div class="ctrl-col">
+                            <h4>Player 2 (Red)</h4>
+                            <p><strong>▲ / ◀ / ▼ / ▶</strong> — 8-Way Move</p>
+                            <p><strong>Auto-Aim</strong> — Tracks Player 1</p>
+                            <p><strong>0 / + / Enter</strong> — Shoot 🔫</p>
+                            <p><strong>Walk over items</strong> — Collect Pataka / Sweets</p>
+                        </div>
+                    </div>
+                    <div class="ctrl-col" style="margin-top: 8px;">
+                        <h4>Mobile Devices</h4>
+                        <p>Virtual 8-Way D-Pad and Fire (🔫) touch controls appear automatically.</p>
+                    </div>
+                </div>
+                <button id="close-settings-btn" class="btn btn-primary" style="margin-top: 20px;">SAVE & CLOSE</button>
+            </div>
+        </div>
+
+        <!-- Buy Me A Coffee / Support Developer Modal -->
+        <div id="coffee-modal" class="modal-backdrop" style="display:none">
+            <div class="modal-card coffee-modal-card">
+                <div class="coffee-header">
+                    <span class="coffee-icon-badge">☕</span>
+                    <h2 class="modal-title" style="margin: 4px 0 2px 0;">BUY ME A COFFEE</h2>
+                    <span class="dev-badge">🎮 GAME DEVELOPER: <strong>DIP DAS</strong></span>
+                </div>
+                
+                <p class="coffee-thank-msg">
+                    Thank you so much for playing <strong>DUEL ZONE</strong>! ❤️<br>
+                    Agar aapko yeh game pasand aaya, toh developer ko ek coffee ☕ donate karke support kar sakte hain. Aapka chhota sa support naye heroes, festivals aur features lane me bohot madad karega!
+                </p>
+
+                <!-- Scanner Card Display -->
+                <div class="donate-scanner-card">
+                    <div class="qr-frame">
+                        <img src="/assets/donate_qr.jpg" alt="UPI Scanner - Donate to DIP DAS" class="donate-qr-img">
+                    </div>
+                    <div class="scanner-subtext">Scan to pay with any UPI app</div>
+                </div>
+
+                <!-- UPI ID & 1-Click Copy Box -->
+                <div class="upi-box">
+                    <div class="upi-text-wrap">
+                        <span class="upi-label">UPI ID:</span>
+                        <span class="upi-val" id="upi-val-text">dip7048@okaxis</span>
+                    </div>
+                    <button type="button" id="copy-upi-btn" class="btn-copy-upi" title="Copy UPI ID to clipboard">
+                        <span id="copy-upi-icon">📋</span>
+                        <span id="copy-upi-lbl">Copy</span>
+                    </button>
+                </div>
+
+                <!-- Coffee Support Amount Suggestions -->
+                <div class="coffee-amount-presets">
+                    <span class="presets-label">Select Support Amount:</span>
+                    <div class="amount-pills">
+                        <button type="button" class="amount-pill active" data-amount="20">₹20 ☕ Chai</button>
+                        <button type="button" class="amount-pill" data-amount="50">₹50 🥤 Cold Drink</button>
+                        <button type="button" class="amount-pill" data-amount="100">₹100 🍕 Pizza</button>
+                        <button type="button" class="amount-pill" data-amount="500">₹500 👑 Super Hero</button>
+                    </div>
+                </div>
+
+                <!-- Direct Pay Link for Mobile UPI Apps (GPay, PhonePe, Paytm) -->
+                <a id="direct-upi-link" href="upi://pay?pa=dip7048@okaxis&pn=DIP%20DAS&am=20&cu=INR&tn=Duel%20Zone%20Coffee%20Support" class="btn btn-upi-pay">
+                    <span>⚡ PAY VIA ANY UPI APP (GPAY / PHONEPE / PAYTM)</span>
+                </a>
+
+                <div class="coffee-bottom-actions">
+                    <button id="close-coffee-btn" class="btn btn-small" style="width: 100%;">← BACK TO GAME</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waiting Screen -->
+        <div id="waiting-screen" style="display:none">
+            <h2 class="waiting-title">WAITING FOR OPPONENT</h2>
+            <div class="room-code-box">
+                <p>ROOM CODE</p>
+                <h1 id="room-code-display" class="room-code-text" title="Click to copy"></h1>
+                <p class="copy-hint">Click to copy</p>
+            </div>
+            <div class="pulse-loader"></div>
+            <button id="cancel-wait-btn" class="btn btn-small">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- GAME CONTAINER (Phaser renders here) -->
+    <div id="game-container" style="display:none"></div>
+
+    <!-- IN-GAME TOP HUD (PAUSE BUTTON) -->
+    <div id="in-game-hud" style="display:none">
+        <button id="in-game-pause-btn" class="pause-hud-btn" title="Pause Game (ESC / P)">
+            <span class="pause-icon">⏸️</span>
+            <span class="pause-text">PAUSE</span>
+        </button>
+    </div>
+
+    <!-- PAUSE OVERLAY MODAL -->
+    <div id="pause-modal" class="modal-backdrop" style="display:none">
+        <div class="modal-card pause-modal-card">
+            <div class="pause-header">
+                <span class="pause-header-icon">⏸️</span>
+                <h2 class="modal-title" style="margin: 0;">GAME PAUSED</h2>
+            </div>
+            <p class="pause-subtext">Match is frozen. Choose an action:</p>
+
+            <div class="pause-actions-list">
+                <button id="pause-resume-btn" class="btn btn-primary btn-glow-blue pause-action-btn">
+                    <span>▶️ RESUME MATCH</span>
+                </button>
+                <button id="pause-restart-btn" class="btn btn-secondary pause-action-btn">
+                    <span>🔄 RESTART MATCH</span>
+                </button>
+                <button id="pause-exit-btn" class="btn btn-accent btn-glow pause-action-btn">
+                    <span>🚪 EXIT TO MAIN MENU</span>
+                </button>
+                <button id="pause-coffee-btn" class="btn btn-coffee" style="margin-top: 6px; width: 100%;">
+                    <span>☕ BUY ME A COFFEE (SUPPORT DIP DAS)</span>
+                </button>
+            </div>
+            <p class="pause-shortcut-hint">Tip: Press <kbd>ESC</kbd> or <kbd>P</kbd> to toggle pause</p>
+        </div>
+    </div>
+
+    <!-- RESULT OVERLAY -->
+    <div id="result-overlay" style="display:none">
+        <div class="result-card">
+            <h1 id="result-title" class="result-text"></h1>
+            <p id="result-detail" class="result-detail"></p>
+            <div class="result-buttons">
+                <button id="rematch-btn" class="btn btn-primary">PLAY AGAIN</button>
+                <button id="menu-btn" class="btn btn-secondary">MAIN MENU</button>
+            </div>
+            <button id="result-coffee-btn" class="btn btn-coffee" style="margin-top: 12px; width: 100%; font-size: 0.85rem; padding: 10px 18px;">
+                <span>☕ BUY ME A COFFEE (SUPPORT DIP DAS)</span>
+            </button>
+            <p id="rematch-status" style="display:none" class="rematch-wait">Waiting for opponent...</p>
+        </div>
+    </div>
+
+    <!-- MOBILE ON-SCREEN CONTROLS (Active on Mobile / Touch Screens) -->
+    <div id="mobile-controls" style="display:none">
+        <!-- Virtual Joystick on Left Side (360-degree analog & 8-direction movement) -->
+        <div class="mobile-joystick-container">
+            <div id="joystick-zone">
+                <div id="joystick-base">
+                    <div id="joystick-ring"></div>
+                    <div id="joystick-knob"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons on Right Side: Jump, Super Power, Fire -->
+        <div class="mobile-actions-container">
+            <button id="btn-jump" class="mobile-btn jump-btn" type="button" aria-label="Jump">
+                <span class="btn-icon">▲</span>
+                <span class="btn-lbl">JUMP</span>
+            </button>
+            <button id="btn-super" class="mobile-btn super-btn" type="button" aria-label="Special Power">
+                <span class="btn-icon">⚡</span>
+                <span class="btn-lbl">SUPER</span>
+            </button>
+            <button id="btn-shoot" class="mobile-btn shoot-btn" type="button" aria-label="Fire Shoot">
+                <span class="btn-icon">🔫</span>
+                <span class="btn-lbl">FIRE</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts loaded in order -->
+    <script>
+        // Disable browser right-click context menu so it never interrupts shooting
+        window.addEventListener('contextmenu', (e) => e.preventDefault());
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/festival.js"></script>
+    <script src="/js/game.js"></script>
+    <script src="/js/lobby.js"></script>
+</body>
+</html>
