@@ -1940,3 +1940,493 @@ html, body {
 .coffee-bottom-actions {
     margin-top: 4px;
 }
+
+/* ========================================================================
+   ROTATE DEVICE OVERLAY & ANIMATION (Mobile Landscape Required)
+   ======================================================================== */
+#rotate-device-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, rgba(17, 24, 39, 0.98) 0%, rgba(3, 7, 18, 0.99) 100%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #ffffff;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.rotate-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 440px;
+    width: 100%;
+    animation: fadeIn 0.35s ease;
+}
+
+/* 3D Rotating Phone Animation Box */
+.phone-anim-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.phone-device-icon {
+    width: 52px;
+    height: 92px;
+    border: 3px solid #00e5ff;
+    border-radius: 12px;
+    background: #0b1329;
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.5), inset 0 0 15px rgba(0, 229, 255, 0.2);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: rotatePhoneAnim 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    transform-origin: center center;
+}
+
+.phone-device-notch {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+}
+
+.phone-device-screen {
+    width: 38px;
+    height: 70px;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(245, 158, 11, 0.15));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.phone-screen-logo {
+    font-size: 1.3rem;
+    animation: pulseLogo 1.3s ease-in-out infinite alternate;
+}
+
+.phone-rotate-arrow {
+    position: absolute;
+    font-size: 2.4rem;
+    color: #f59e0b;
+    top: -6px;
+    right: 2px;
+    text-shadow: 0 0 14px rgba(245, 158, 11, 0.8);
+    animation: spinArrow 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+}
+
+@keyframes rotatePhoneAnim {
+    0%, 20% {
+        transform: rotate(0deg);
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        border-color: #00e5ff;
+    }
+    45%, 75% {
+        transform: rotate(90deg);
+        box-shadow: 0 0 32px rgba(245, 158, 11, 0.7);
+        border-color: #f59e0b;
+    }
+    100% {
+        transform: rotate(0deg);
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        border-color: #00e5ff;
+    }
+}
+
+@keyframes spinArrow {
+    0%, 20% {
+        transform: rotate(0deg) scale(0.9);
+        opacity: 0.6;
+    }
+    45%, 75% {
+        transform: rotate(90deg) scale(1.15);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(0deg) scale(0.9);
+        opacity: 0.6;
+    }
+}
+
+@keyframes pulseLogo {
+    from { transform: scale(0.9); opacity: 0.8; }
+    to { transform: scale(1.15); opacity: 1; }
+}
+
+.rotate-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fde047;
+    letter-spacing: 2px;
+    margin: 0 0 8px 0;
+    text-shadow: 0 0 16px rgba(253, 224, 71, 0.4);
+}
+
+.rotate-subtitle {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    margin: 0 0 10px 0;
+    line-height: 1.45;
+}
+
+.rotate-subtitle strong {
+    color: #00e5ff;
+}
+
+.rotate-hindi {
+    font-size: 0.88rem;
+    color: #f59e0b;
+    margin: 0 0 22px 0;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+    padding: 8px 14px;
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+.btn-rotate-play {
+    width: 100%;
+    max-width: 320px;
+    background: linear-gradient(135deg, #00e5ff 0%, #0284c7 100%);
+    color: #000000;
+    font-weight: 900;
+    font-size: 0.92rem;
+    letter-spacing: 1.2px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    border: 1px solid #7dd3fc;
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-rotate-play:hover, .btn-rotate-play:active {
+    transform: scale(1.03);
+    box-shadow: 0 0 35px rgba(0, 229, 255, 0.8);
+    background: linear-gradient(135deg, #38bdf8 0%, #00e5ff 100%);
+}
+
+.hud-fs-btn {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    color: #fde047 !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.25) !important;
+}
+
+.hud-fs-btn:hover {
+    background: rgba(245, 158, 11, 0.2) !important;
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6) !important;
+}
+
+/* ========================================================================
+   MOBILE LANDSCAPE RESPONSIVE FIX (PC-Like Full View Experience)
+   Matches phones in rotated landscape mode (height <= 550px)
+   ======================================================================== */
+@media (max-height: 550px) and (orientation: landscape), (max-height: 480px) {
+    /* Prevent page scroll; keep everything fixed & centered like PC */
+    html, body {
+        overflow: hidden !important;
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    #lobby {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding: 4px 10px !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    #menu-screen {
+        max-height: 98vh !important;
+        width: 100% !important;
+        max-width: 720px !important;
+        padding: 4px 0 !important;
+        justify-content: center !important;
+    }
+
+    .logo-container {
+        margin-bottom: 2px !important;
+    }
+
+    .game-logo {
+        font-size: 2.1rem !important;
+        letter-spacing: 4px !important;
+        line-height: 1.1 !important;
+        margin: 0 !important;
+    }
+
+    .tagline {
+        font-size: 0.58rem !important;
+        letter-spacing: 2px !important;
+        margin-top: 2px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .menu-buttons {
+        margin-top: 8px !important;
+        gap: 6px !important;
+        width: 100% !important;
+        max-width: 520px !important;
+    }
+
+    .btn {
+        padding: 7px 16px !important;
+        font-size: 0.74rem !important;
+        letter-spacing: 1px !important;
+        min-height: unset !important;
+    }
+
+    .btn-small {
+        padding: 5px 12px !important;
+        font-size: 0.68rem !important;
+    }
+
+    .menu-online-row, .menu-sub-row {
+        gap: 8px !important;
+    }
+
+    .menu-coffee-row {
+        margin-top: 2px !important;
+    }
+
+    .btn-coffee-menu {
+        padding: 6px 14px !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* Modals in landscape: compact & fit screen cleanly */
+    .modal-backdrop {
+        padding: 6px !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .modal-card {
+        padding: 10px 16px !important;
+        max-height: 96vh !important;
+        overflow-y: auto !important;
+        border-radius: 10px !important;
+    }
+
+    .char-modal-card {
+        max-width: 860px !important;
+        width: 98% !important;
+        padding: 4px 12px !important;
+    }
+
+    .modal-title {
+        font-size: 0.92rem !important;
+        margin-bottom: 2px !important;
+        letter-spacing: 1px !important;
+    }
+
+    .matchup-preview-bar {
+        display: none !important; /* In compact mobile landscape, badges on cards already show P1/P2 cleanly */
+    }
+
+    /* Map & Difficulty selection in landscape: sleek inline rows */
+    .map-selection-bar {
+        padding: 2px 6px !important;
+        margin-bottom: 2px !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+
+    .map-selection-title {
+        font-size: 0.62rem !important;
+        margin: 0 !important;
+    }
+
+    .map-options {
+        display: flex !important;
+        gap: 5px !important;
+    }
+
+    .map-btn {
+        padding: 3px 6px !important;
+        gap: 3px !important;
+    }
+
+    .map-name {
+        font-size: 0.68rem !important;
+    }
+
+    .map-sub {
+        display: none !important; /* Hide verbose subtitle in landscape */
+    }
+
+    .bot-difficulty-bar {
+        padding: 2px 6px !important;
+        margin-bottom: 2px !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+
+    .bot-difficulty-title {
+        font-size: 0.62rem !important;
+        margin: 0 !important;
+    }
+
+    .difficulty-options {
+        display: flex !important;
+        gap: 4px !important;
+    }
+
+    .diff-btn {
+        padding: 2px 5px !important;
+        gap: 2px !important;
+    }
+
+    .diff-name {
+        font-size: 0.62rem !important;
+    }
+
+    .diff-desc {
+        display: none !important; /* Hide verbose subtitle in landscape */
+    }
+
+    /* Character Cards in landscape: compact so all 5 cards & Start button fit */
+    .characters-grid {
+        gap: 5px !important;
+        margin-bottom: 3px !important;
+    }
+
+    .char-card {
+        padding: 3px 4px !important;
+        min-width: 58px !important;
+    }
+
+    .char-role, .char-stats {
+        display: none !important; /* Hide verbose stat paragraphs in landscape */
+    }
+
+    .char-badge {
+        font-size: 0.5rem !important;
+        padding: 1px 3px !important;
+        top: 2px !important;
+        right: 2px !important;
+    }
+
+    .char-avatar-container {
+        width: 34px !important;
+        height: 34px !important;
+        margin: 0 auto 2px auto !important;
+    }
+
+    .char-photo-avatar {
+        width: 34px !important;
+        height: 34px !important;
+    }
+
+    .char-card h3 {
+        font-size: 0.72rem !important;
+        margin: 1px 0 !important;
+    }
+
+    .char-actions {
+        gap: 2px !important;
+        margin-top: 2px !important;
+    }
+
+    .char-actions .btn-sm {
+        padding: 2px 3px !important;
+        font-size: 0.54rem !important;
+    }
+
+    .roster-actions {
+        margin-top: 3px !important;
+    }
+
+    #start-battle-btn {
+        padding: 5px 18px !important;
+        font-size: 0.76rem !important;
+    }
+
+    /* In-Game HUD buttons on mobile landscape: Compact icon-only pills */
+    #in-game-hud {
+        top: 6px !important;
+        right: 8px !important;
+        gap: 6px !important;
+    }
+
+    .pause-hud-btn {
+        padding: 4px 8px !important;
+        font-size: 0.72rem !important;
+        border-radius: 14px !important;
+    }
+
+    .pause-hud-btn .pause-text, .pause-hud-btn .fs-text {
+        display: none !important; /* Icon-only in mobile landscape */
+    }
+
+    .pause-hud-btn .pause-icon, .pause-hud-btn .fs-icon {
+        font-size: 0.95rem !important;
+        margin: 0 !important;
+    }
+
+    /* Game Container: true full screen fit */
+    #game-container {
+        width: 100vw !important;
+        width: 100dvw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        overflow: hidden !important;
+    }
+
+    /* Mobile virtual controls: sleek & compact to not block game vision */
+    #mobile-controls {
+        padding: 8px 12px !important;
+    }
+
+    .mobile-joystick-container {
+        bottom: 10px !important;
+        left: 10px !important;
+    }
+
+    .mobile-actions-container {
+        bottom: 10px !important;
+        right: 10px !important;
+        gap: 10px !important;
+    }
+
+    .mobile-btn {
+        width: 54px !important;
+        height: 54px !important;
+    }
+
+    .mobile-btn .btn-icon {
+        font-size: 1.25rem !important;
+    }
+
+    .mobile-btn .btn-lbl {
+        font-size: 0.52rem !important;
+    }
+}

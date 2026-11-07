@@ -2761,7 +2761,7 @@ class GameScene extends Phaser.Scene {
         fontSize: '10px', fontFamily: 'Arial', color: '#ffffff', fontStyle: 'bold'
       }).setOrigin(0.5).setScrollFactor(0).setDepth(HUD_DEPTH + 2);
 
-      const p2TopDownX = ARENA_W - 350;
+      const p2TopDownX = ARENA_W - 380;
       let p2Label = `P2: ${this.p2Def.name}`;
       if (this.isLocal2P) p2Label = `P2: ${this.p2Def.name} [ARROWS + 0/+]`;
       else if (this.isBotMatch) p2Label = `BOT: ${this.p2Def.name} [${this.botDiffConfig.tag}]`;
@@ -2810,7 +2810,7 @@ class GameScene extends Phaser.Scene {
         fontSize: '10px', fontFamily: 'Arial', color: '#fbbf24', fontStyle: 'bold'
       }).setScrollFactor(0).setDepth(HUD_DEPTH);
 
-      const p2SideX = ARENA_W - 370;
+      const p2SideX = ARENA_W - 390;
       this.p2Hearts = [];
       for (let i = 0; i < 3; i++) {
         const heart = this.add.image(p2SideX + i * 28, 30, 'heart-full')
@@ -2890,7 +2890,7 @@ class GameScene extends Phaser.Scene {
     this.p2SuperFill.clear();
     const p2Pct = Math.min(100, Math.max(0, this.p2Super)) / 100;
     const p2FillW = Math.max(0, 116 * p2Pct);
-    const p2SideX = ARENA_W - 370;
+    const p2SideX = ARENA_W - 390;
     if (p2FillW > 0) {
       const p2Color = this.p2Super >= 100 ? 0xffea00 : (this.p2Super > 50 ? 0xf59e0b : 0xef4444);
       this.p2SuperFill.fillStyle(p2Color, 1.0);

@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="screen-orientation" content="landscape">
     <title>DUEL ZONE</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="style.css">
@@ -324,8 +328,12 @@
     <!-- GAME CONTAINER (Phaser renders here) -->
     <div id="game-container" style="display:none"></div>
 
-    <!-- IN-GAME TOP HUD (PAUSE BUTTON) -->
+    <!-- IN-GAME TOP HUD (FULLSCREEN & PAUSE BUTTONS) -->
     <div id="in-game-hud" style="display:none">
+        <button id="in-game-fullscreen-btn" class="pause-hud-btn hud-fs-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
+            <span class="fs-icon">⛶</span>
+            <span class="fs-text">FULL</span>
+        </button>
         <button id="in-game-pause-btn" class="pause-hud-btn" title="Pause Game (ESC / P)">
             <span class="pause-icon">⏸️</span>
             <span class="pause-text">PAUSE</span>
@@ -400,6 +408,27 @@
             <button id="btn-shoot" class="mobile-btn shoot-btn" type="button" aria-label="Fire Shoot">
                 <span class="btn-icon">🔫</span>
                 <span class="btn-lbl">FIRE</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ROTATE DEVICE OVERLAY (Mobile Portrait Warning & Auto-Fullscreen) -->
+    <div id="rotate-device-overlay" style="display:none">
+        <div class="rotate-content">
+            <div class="phone-anim-wrapper">
+                <div class="phone-device-icon">
+                    <div class="phone-device-notch"></div>
+                    <div class="phone-device-screen">
+                        <span class="phone-screen-logo">⚔️</span>
+                    </div>
+                </div>
+                <div class="phone-rotate-arrow">⟲</div>
+            </div>
+            <h2 class="rotate-title">ROTATE YOUR DEVICE</h2>
+            <p class="rotate-subtitle">Duel Zone requires <strong>Landscape Mode</strong> for the best battle experience!</p>
+            <p class="rotate-hindi">📱 Phone ko Landscape me ghumaate hi game <strong>Full Screen</strong> me open hoga!</p>
+            <button id="btn-rotate-play" class="btn btn-rotate-play" type="button">
+                <span>🎮 TAP TO ENTER FULLSCREEN & PLAY</span>
             </button>
         </div>
     </div>

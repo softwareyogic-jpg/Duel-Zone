@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkIsMobile() {
         const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isSmallScreen = window.innerWidth <= 900;
+        const isSmallScreen = window.innerWidth <= 900 || window.innerHeight <= 900;
         const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-        // True only for mobile devices, phones, tablets, or small touch viewports
+        // True for mobile devices, phones, tablets, or small touch viewports
         return isMobileUA || (hasTouch && (isSmallScreen || isCoarse));
     }
     let isMobile = checkIsMobile();
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isMobile) {
             isMobile = true;
             updateMobileControlsVisibility();
+            checkOrientation();
         }
     }, { passive: true, once: true });
 
@@ -55,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameContainer = document.getElementById('game-container');
     const resultOverlay = document.getElementById('result-overlay');
     const mobileControls = document.getElementById('mobile-controls');
+    const rotateOverlay = document.getElementById('rotate-device-overlay');
+    const btnRotatePlay = document.getElementById('btn-rotate-play');
+    const inGameFullscreenBtn = document.getElementById('in-game-fullscreen-btn');
 
     const createBtn = document.getElementById('create-btn');
     const joinBtn = document.getElementById('join-btn');
@@ -456,11 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             soundToggleBtn.style.color = window.soundEnabled ? '#00e5ff' : '#ff1744';
         });
         fullscreenBtn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
-            } else {
-                document.exitFullscreen().catch(() => {});
-            }
+            toggleFullscreen();
         });
     }
 
@@ -1111,6 +1111,147 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMobileActionButton('btn-jump', 'jump');
 
     window.mobileBtnSuper = document.getElementById('btn-super');
+
+    // ----------------------------------------------------------------
+    // Mobile Orientation & Fullscreen Manager
+    // When mobile is in portrait -> Show rotate warning overlay
+    // When mobile is rotated to landscape -> Hide overlay & Auto-Fullscreen
+    // ----------------------------------------------------------------
+    let wasPortrait = false;
+    let autoFullscreenAttempted = false;
+
+    function isDevicePortrait() {
+        if (window.screen && window.screen.orientation && window.screen.orientation.type) {
+            return window.screen.orientation.type.includes('portrait');
+        }
+        return window.innerHeight > window.innerWidth;
+    }
+
+    function triggerFullscreen() {
+        const docEl = document.documentElement;
+        const reqFs = docEl.requestFullscreen ||
+                      docEl.webkitRequestFullscreen ||
+                      docEl.mozRequestFullScreen ||
+                      docEl.msRequestFullscreen;
+
+        if (reqFs && !document.fullscreenElement && !document.webkitFullscreenElement) {
+            try {
+                const res = reqFs.call(docEl);
+                if (res && res.catch) {
+                    res.catch(() => {
+                        armFullscreenOnNextTouch();
+                    });
+                }
+            } catch (e) {
+                armFullscreenOnNextTouch();
+            }
+        }
+
+        // Try locking orientation to landscape if supported
+        if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+            try {
+                window.screen.orientation.lock('landscape').catch(() => {});
+            } catch (e) {}
+        }
+    }
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            triggerFullscreen();
+        } else {
+            const exitFs = document.exitFullscreen ||
+                           document.webkitExitFullscreen ||
+                           document.mozCancelFullScreen ||
+                           document.msExitFullscreen;
+            if (exitFs) {
+                try {
+                    exitFs.call(document);
+                } catch (e) {}
+            }
+        }
+    }
+
+    function armFullscreenOnNextTouch() {
+        function onTouchFs() {
+            triggerFullscreen();
+            window.removeEventListener('touchend', onTouchFs);
+            window.removeEventListener('click', onTouchFs);
+        }
+        window.addEventListener('touchend', onTouchFs, { once: true, passive: true });
+        window.addEventListener('click', onTouchFs, { once: true });
+    }
+
+    function updateFullscreenIcons() {
+        const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+        if (inGameFullscreenBtn) {
+            const icon = inGameFullscreenBtn.querySelector('.fs-icon');
+            const text = inGameFullscreenBtn.querySelector('.fs-text');
+            if (icon) icon.textContent = isFs ? '✕' : '⛶';
+            if (text) text.textContent = isFs ? 'EXIT' : 'FULL';
+        }
+        if (fullscreenBtn) {
+            fullscreenBtn.textContent = isFs ? 'EXIT FULLSCREEN' : 'FULLSCREEN';
+        }
+    }
+
+    function checkOrientation() {
+        const mobile = checkIsMobile();
+        isMobile = mobile;
+        const portrait = isDevicePortrait();
+
+        if (mobile) {
+            if (portrait) {
+                wasPortrait = true;
+                if (rotateOverlay) rotateOverlay.style.display = 'flex';
+            } else {
+                if (rotateOverlay) rotateOverlay.style.display = 'none';
+                // If it was in portrait and rotated to landscape, automatically open in Full Screen!
+                if (wasPortrait || !autoFullscreenAttempted) {
+                    wasPortrait = false;
+                    autoFullscreenAttempted = true;
+                    triggerFullscreen();
+                }
+            }
+        } else {
+            if (rotateOverlay) rotateOverlay.style.display = 'none';
+        }
+
+        updateFullscreenIcons();
+    }
+
+    if (btnRotatePlay) {
+        btnRotatePlay.addEventListener('click', () => {
+            triggerFullscreen();
+            if (!isDevicePortrait()) {
+                if (rotateOverlay) rotateOverlay.style.display = 'none';
+            }
+        });
+    }
+
+    if (inGameFullscreenBtn) {
+        inGameFullscreenBtn.addEventListener('click', () => {
+            toggleFullscreen();
+        });
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenIcons);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenIcons);
+
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(checkOrientation, 150);
+        setTimeout(checkOrientation, 400);
+    });
+    if (window.screen && window.screen.orientation) {
+        window.screen.orientation.addEventListener('change', () => {
+            setTimeout(checkOrientation, 150);
+            setTimeout(checkOrientation, 400);
+        });
+    }
+
+    // Initial check on load
+    setTimeout(checkOrientation, 80);
+    setTimeout(checkOrientation, 350);
 
     // ----------------------------------------------------------------
     // Initialize — show menu screen
